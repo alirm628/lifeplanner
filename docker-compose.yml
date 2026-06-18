@@ -1,0 +1,55 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    container_name: lifeplanner-backend
+    restart: unless-stopped
+    environment:
+      APP_NAME: ${APP_NAME:-LifePlanner API}
+      ENVIRONMENT: ${APP_ENV:-production}
+      API_V1_PREFIX: /api/v1
+      DATABASE_URL: ${DATABASE_URL:-sqlite:////data/lifeplanner.db}
+      SECRET_KEY: ${SECRET_KEY:-change-me}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES:-1440}
+      ALGORITHM: ${ALGORITHM:-HS256}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173,http://localhost}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@local.dev}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin1234}
+      DEFAULT_TIMEZONE: ${TZ:-America/New_York}
+    volumes:
+      - lifeplanner_data:/data
+    networks:
+      - lifeplanner
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: lifeplanner-frontend
+    restart: unless-stopped
+    environment:
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL:-}
+    depends_on:
+      - backend
+    networks:
+      - lifeplanner
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: lifeplanner-nginx
+    restart: unless-stopped
+    depends_on:
+      - frontend
+      - backend
+    ports:
+      - '${NGINX_PORT:-80}:80'
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - lifeplanner
+
+volumes:
+  lifeplanner_data:
+
+networks:
+  lifeplanner:
+    driver: bridge

@@ -1,0 +1,21 @@
+# Node
+frontend/node_modules
+frontend/dist
+
+# Python
+backend/.venv
+backend/__pycache__
+backend/.pytest_cache
+backend/test_lifeplanner.db
+backend/*.db
+backend/lifeplanner.db
+
+# Env
+.env
+backend/.env
+frontend/.env
+
+# Misc
+*.log
+.DS_Store
+Thumbs.db
