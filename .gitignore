@@ -5,6 +5,8 @@ frontend/dist
 # Python
 backend/.venv
 backend/__pycache__
+**/__pycache__/
+*.pyc
 backend/.pytest_cache
 backend/test_lifeplanner.db
 backend/*.db
